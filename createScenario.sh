@@ -24,9 +24,11 @@ osm nsd-create pck/ns-vcpe.tar.gz
 
 #Definir NS en OSM:
 #Red residencial 1
-osm ns-create --ns_name vcpe-1 --nsd_name vCPE
+#osm ns-create --ns_name vcpe-1 --nsd_name vCPE
+osm ns-create --ns_name vcpe-1 --nsd_name vCPE --vim_account emu-vim
 #Red residencial 2
-osm ns-create --ns_name vcpe-2 --nsd_name vCPE
+#osm ns-create --ns_name vcpe-2 --nsd_name vCPE
+osm ns-create --ns_name vcpe-2 --nsd_name vCPE --vim_account emu-vim
 
 #Para borrar:
 #vcpe_destroy.sh vcpe-1
