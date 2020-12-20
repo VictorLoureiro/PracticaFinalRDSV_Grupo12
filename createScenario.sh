@@ -28,6 +28,13 @@ osm nsd-create pck/ns-vcpe.tar.gz
 #osm vnfd-delete vcpe-ha
 
 
+
+#CONFIGURAR VYOS (DEJAR QoS para el final)
+
+#LEVANTAR ESCENARIOS VNX
+
+#CREAR VXLANs
+
 #Generar desde aqui las VXLAN
 #Ejemplo de la practica 6.4 de CNVR:
 #./vcpe_start.sh vcpe-1 10.255.0.1 10.255.0.2 10.0.0.1 10.2.3.1 192.168.255.1
