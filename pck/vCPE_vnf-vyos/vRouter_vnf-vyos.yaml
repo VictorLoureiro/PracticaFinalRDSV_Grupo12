@@ -4,14 +4,14 @@ vnfd-catalog:
     - name: eth1
       type: VPORT
     description: Router-VNF-VyOS
-    id: vyos
+    id: vcpe
     mgmt-interface:
       cp: eth1
-    name: vyos
-    short-name: vyos
+    name: vcpe
+    short-name: vcpe
     vdu:
     - count: '1'
-      description: vyos Docker container
+      description: vcpe:vyos Docker container
       id: ubuntu
       image: vnf-vyos
       interface:

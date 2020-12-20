@@ -7,13 +7,13 @@ sudo ovs-vsctl add-br AccessNet
 sudo ovs-vsctl add-br ExtNet
 
 #Creamos las imagenes de Docker
-#VyOS
+#vnf-vyos VyOS
 sudo docker build -t vnf-vyos img/vnf-vyos
 
 #vnf-img (Ryu)
 sudo docker build -t vnf-img img/vnf-img
 
-#Instalacion de descriptores en OSM --> Pendiente de modificar para poner los paquetes nuestros
+#Instalacion de descriptores en OSM
 #VNFs
 #vcpe vyos
 osm vnfd-create pck/vnf-vcpe.tar.gz
@@ -22,10 +22,19 @@ osm vnfd-create pck/vnf-vclass.tar.gz
 #NS
 osm nsd-create pck/ns-vcpe.tar.gz
 
-#Para borrar:
-#osm nsd-delete vCPE
+#Definir NS en OSM:
+#Red residencial 1
+osm ns-create --ns_name vcpe-1 --nsd_name vCPE
+#Red residencial 2
+osm ns-create --ns_name vcpe-2 --nsd_name vCPE
 
-#osm vnfd-delete vcpe-ha
+#Para borrar:
+#vcpe_destroy.sh vcpe-1
+#vcpe_destroy.sh vcpe-2
+#osm nsd-delete vCPE
+#osm vnfd-delete vcpe
+#osm vnfd-delete vclass
+
 
 
 

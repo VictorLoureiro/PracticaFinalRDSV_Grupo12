@@ -1,4 +1,4 @@
-FROM ubuntu:xenial
+FROM ubuntu:bionic
 # install required packages
 RUN apt-get clean
 RUN apt-get update \
@@ -21,11 +21,14 @@ RUN apt-get update \
     tcpdump \
     openvswitch-switch \
     iperf3 \
+    ryu-bin \
+    iproute2 \
     vim
 
 
 COPY dhcpd.conf /etc/dhcp/dhcpd.conf
 COPY isc-dhcp-server /etc/default/isc-dhcp-server
+#HACER UN COPY CON EL FICHERO qos_simple_switch_13.py
 
 #Install isc-dhcp-server
 #RUN apt-get update
