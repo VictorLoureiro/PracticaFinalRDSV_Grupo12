@@ -28,7 +28,7 @@ osm nsd-create pck/ns-vcpe.tar.gz
 osm ns-create --ns_name vcpe-1 --nsd_name vCPE --vim_account emu-vim
 #Red residencial 2
 #osm ns-create --ns_name vcpe-2 --nsd_name vCPE
-osm ns-create --ns_name vcpe-2 --nsd_name vCPE --vim_account emu-vim
+#osm ns-create --ns_name vcpe-2 --nsd_name vCPE --vim_account emu-vim
 
 #Para borrar:
 #vcpe_destroy.sh vcpe-1
@@ -39,15 +39,15 @@ osm ns-create --ns_name vcpe-2 --nsd_name vCPE --vim_account emu-vim
 
 
 #Configuracion de tunel VXLAN entre vclass y vcpe (Desde NFV VyOS)
-set interfaces vxlan vxlan0 address 192.168.100.4/24
-set interfaces vxlan vxlan0 address 192.168.100.3/24
-set interfaces vxlan vxlan0 description 'VXLAN entre vclass OpenFlow y vcpe VyOS'
-set interfaces vxlan vxlan0 mtu 1400
-set interfaces vxlan vxlan0 ip arp-cache-timeout 180
-set interfaces vxlan vxlan0 vni 100
-set interfaces vxlan vxlan0 port 8472
-set interfaces vxlan vxlan0 source-address 192.168.100.4
-set interfaces vxlan vxlan0 remote 192.168.100.3
+#set interfaces vxlan vxlan0 address 192.168.100.4/24
+#set interfaces vxlan vxlan0 address 192.168.100.3/24
+#set interfaces vxlan vxlan0 description 'VXLAN entre vclass OpenFlow y vcpe VyOS'
+#set interfaces vxlan vxlan0 mtu 1400
+#set interfaces vxlan vxlan0 ip arp-cache-timeout 180
+#set interfaces vxlan vxlan0 vni 100
+#set interfaces vxlan vxlan0 port 8472
+#set interfaces vxlan vxlan0 source-address 192.168.100.4
+#set interfaces vxlan vxlan0 remote 192.168.100.3
 
 
 #CONFIGURAR VYOS (DEJAR QoS para el final)

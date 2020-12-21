@@ -1,8 +1,8 @@
 FROM ubuntu:bionic
 # install required packages
 RUN apt-get clean
-RUN export DEBIAN_FRONTEND=noninteractive \
-    apt-get update \
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update \
     && apt-get install -y  git \
     net-tools \
     aptitude \
