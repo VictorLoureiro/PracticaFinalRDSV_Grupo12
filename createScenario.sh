@@ -46,8 +46,8 @@ set interfaces vxlan vxlan0 mtu 1400
 set interfaces vxlan vxlan0 ip arp-cache-timeout 180
 set interfaces vxlan vxlan0 vni 100
 set interfaces vxlan vxlan0 port 8472
-set interfaces vxlan vxlan0 source-address 192.168.100.4/24
-set interfaces vxlan vxlan0 remote 192.168.100.3/24
+set interfaces vxlan vxlan0 source-address 192.168.100.4
+set interfaces vxlan vxlan0 remote 192.168.100.3
 
 
 #CONFIGURAR VYOS (DEJAR QoS para el final)
