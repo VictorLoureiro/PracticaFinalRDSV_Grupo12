@@ -28,7 +28,12 @@ osm nsd-create pck/ns-vcpe.tar.gz
 osm ns-create --ns_name vcpe-1 --nsd_name vCPE --vim_account emu-vim
 #Red residencial 2
 #osm ns-create --ns_name vcpe-2 --nsd_name vCPE
-#osm ns-create --ns_name vcpe-2 --nsd_name vCPE --vim_account emu-vim
+osm ns-create --ns_name vcpe-2 --nsd_name vCPE --vim_account emu-vim
+
+VNF1="mn.dc1_vcpe-1-1-ubuntu-1"
+VNF2="mn.dc1_vcpe-1-2-ubuntu-1"
+VNF3="mn.dc1_vcpe-2-1-ubuntu-1"
+VNF4="mn.dc1_vcpe-2-2-ubuntu-1"
 
 #Para borrar:
 #vcpe_destroy.sh vcpe-1
@@ -37,20 +42,31 @@ osm ns-create --ns_name vcpe-1 --nsd_name vCPE --vim_account emu-vim
 #osm vnfd-delete vcpe
 #osm vnfd-delete vclass
 
+#CONFIGURAR VYOS (DEJAR QoS para el final) [NAT Y DHCP] El script Configura los dos VyOS
+#TENEMOS SCRIPT EN img/vnf-vyos
+#./img/vnf-vyos/configureVyOS.sh
 
 #Configuracion de tunel VXLAN entre vclass y vcpe (Desde NFV VyOS)
-#set interfaces vxlan vxlan0 address 192.168.100.4/24
+#Podemos incluirlo en el scrip previo. 
+sudo docker exec -it $VNF2 bash -c "
+su - vyos
+configure
+set interfaces vxlan vxlan0 address 192.168.100.4/24
+set interfaces vxlan vxlan0 description 'VXLAN entre vclass OpenFlow y vcpe VyOS'
+set interfaces vxlan vxlan0 mtu 1400
+set interfaces vxlan vxlan0 ip arp-cache-timeout 180
+set interfaces vxlan vxlan0 vni 100
+set interfaces vxlan vxlan0 port 8472
+set interfaces vxlan vxlan0 remote 192.168.100.3
+commit
+save
+exit
+"
 #set interfaces vxlan vxlan0 address 192.168.100.3/24
-#set interfaces vxlan vxlan0 description 'VXLAN entre vclass OpenFlow y vcpe VyOS'
-#set interfaces vxlan vxlan0 mtu 1400
-#set interfaces vxlan vxlan0 ip arp-cache-timeout 180
-#set interfaces vxlan vxlan0 vni 100
-#set interfaces vxlan vxlan0 port 8472
 #set interfaces vxlan vxlan0 source-address 192.168.100.4
-#set interfaces vxlan vxlan0 remote 192.168.100.3
 
 
-#CONFIGURAR VYOS (DEJAR QoS para el final)
+
 
 #LEVANTAR ESCENARIOS VNX
 
