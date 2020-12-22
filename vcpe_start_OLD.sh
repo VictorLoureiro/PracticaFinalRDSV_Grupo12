@@ -39,14 +39,13 @@ IP21=`sudo docker exec -it $VNF2 hostname -I | awk '{printf "%s\n", $1}{print $2
 echo "--"
 echo "--OVS Starting..."
 sudo docker exec -it $VNF1 /usr/share/openvswitch/scripts/ovs-ctl start
-#sudo docker exec -it $VNF2 /usr/share/openvswitch/scripts/ovs-ctl start
+sudo docker exec -it $VNF2 /usr/share/openvswitch/scripts/ovs-ctl start
 
 echo "--"
 echo "--Connecting vCPE service with AccessNet and ExtNet..."
 
 sudo ovs-docker add-port AccessNet veth0 $VNF1
-#sudo ovs-docker add-port ExtNet veth0 $VNF2
-sudo ovs-docker add-port ExtNet eth2 $VNF2
+sudo ovs-docker add-port ExtNet veth0 $VNF2
 
 echo "--"
 echo "--Setting VNF..."
@@ -56,40 +55,33 @@ echo "--Bridge Creating..."
 ## 1. En VNF:vclass agregar un bridge y asociar interfaces.
 sudo docker exec -it $VNF1 ovs-vsctl add-br br0
 sudo docker exec -it $VNF1 ifconfig veth0 $VNFTUNIP/24
-#sudo docker exec -it $VNF1 ovs-vsctl add-port br0 vxlan1 -- set interface vxlan1 type=vxlan options:remote_ip=$HOMETUNIP
-#sudo docker exec -it $VNF1 ovs-vsctl add-port br0 vxlan2 -- set interface vxlan2 type=vxlan options:remote_ip=$IP21
-sudo docker exec -it $VNF1 ip link add vxlan1 type vxlan id 0 remote $HOMETUNIP dstport 4789 dev veth0
-sudo docker exec -it $VNF1 ip link add vxlan2 type vxlan id 1 remote $IP21 dstport 8472 dev eth1-0
-sudo docker exec -it $VNF1 ovs-vsctl add-port br0 vxlan1
-sudo docker exec -it $VNF1 ovs-vsctl add-port br0 vxlan2
-sudo docker exec -it $VNF1 ifconfig vxlan1 up
-sudo docker exec -it $VNF1 ifconfig vxlan2 up
+sudo docker exec -it $VNF1 ovs-vsctl add-port br0 vxlan1 -- set interface vxlan1 type=vxlan options:remote_ip=$HOMETUNIP
+sudo docker exec -it $VNF1 ovs-vsctl add-port br0 vxlan2 -- set interface vxlan2 type=vxlan options:remote_ip=$IP21
 
 ## 2. En VNF:vcpe agregar un bridge y asociar interfaces.
-#Configurado desde el script de VyOS
-#sudo docker exec -it $VNF2 ovs-vsctl add-br br1
-#sudo docker exec -it $VNF2 /sbin/ifconfig br1 $VCPEPRIVIP/24
-#sudo docker exec -it $VNF2 ovs-vsctl add-port br1 vxlan1 -- set interface vxlan1 type=vxlan options:remote_ip=$IP11
-#sudo docker exec -it $VNF2 ifconfig br1 mtu 1400
+sudo docker exec -it $VNF2 ovs-vsctl add-br br1
+sudo docker exec -it $VNF2 /sbin/ifconfig br1 $VCPEPRIVIP/24
+sudo docker exec -it $VNF2 ovs-vsctl add-port br1 vxlan1 -- set interface vxlan1 type=vxlan options:remote_ip=$IP11
+sudo docker exec -it $VNF2 ifconfig br1 mtu 1400
 
 ## 3. En VNF:vcpe asignar dirección IP a interfaz de salida.
-#sudo docker exec -it $VNF2 /sbin/ifconfig veth0 $VCPEPUBIP/24
-#sudo docker exec -it $VNF2 ip route del 0.0.0.0/0 via 172.17.0.1
-#sudo docker exec -it $VNF2 ip route add 0.0.0.0/0 via 10.2.3.254
+sudo docker exec -it $VNF2 /sbin/ifconfig veth0 $VCPEPUBIP/24
+sudo docker exec -it $VNF2 ip route del 0.0.0.0/0 via 172.17.0.1
+sudo docker exec -it $VNF2 ip route add 0.0.0.0/0 via 10.2.3.254
 
 ## 4. Iniciar Servidor DHCP 
-#echo "--"
-#echo "--DHCP Server Starting..."
-#if [ -f "$DHCPDCONF" ]; then
-#    echo "--Using $DHCPDCONF for DHCP"
-#    docker cp $DHCPDCONF $VNF2:/etc/dhcp/dhcpd.conf
-#else
-#    echo "--$DHCPCONF not found for DHCP, the container will use the default"
-#fi
-#sudo docker exec -it $VNF2 service isc-dhcp-server restart
-#sleep 10
+echo "--"
+echo "--DHCP Server Starting..."
+if [ -f "$DHCPDCONF" ]; then
+    echo "--Using $DHCPDCONF for DHCP"
+    docker cp $DHCPDCONF $VNF2:/etc/dhcp/dhcpd.conf
+else
+    echo "--$DHCPCONF not found for DHCP, the container will use the default"
+fi
+sudo docker exec -it $VNF2 service isc-dhcp-server restart
+sleep 10
 
 ## 5. En VNF:vcpe activar NAT para dar salida a Internet 
-#docker cp /usr/bin/vnx_config_nat  $VNF2:/usr/bin
-#sudo docker exec -it $VNF2 /usr/bin/vnx_config_nat br1 veth0
+docker cp /usr/bin/vnx_config_nat  $VNF2:/usr/bin
+sudo docker exec -it $VNF2 /usr/bin/vnx_config_nat br1 veth0
 
