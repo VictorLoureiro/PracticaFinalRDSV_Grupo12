@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#Variables a utilizar en VyOS
+#Variables a utilizar en VyOS, se puede cambiar para que se capturen
 VNF2="mn.dc1_vcpe-1-2-ubuntu-1" # Nombre del docker VyOS. Obtener con “docker ps”
 VNF4="mn.dc1_vcpe-2-2-ubuntu-1"
 
@@ -11,71 +11,47 @@ sudo docker exec -it $VNF2 bash -c "
 su - vyos
 configure
 set system host-name $HNAME
-
 set interfaces ethernet eth0 address dhcp
 set interfaces ethernet eth0 description 'OUTSIDE'
-
-set interfaces ethernet eth1 address '192.168.0.1/24'
-set interfaces ethernet eth1 description 'INSIDE'
-
+set interfaces ethernet eth0 mtu 1400
+set interfaces ethernet eth1 address '192.168.255.1/24'
+set interfaces ethernet eth1 description 'VCPE PRIVATE IP'
+set interfaces ethernet eth1 mtu 1400
+set interfaces ethernet eth2 address '10.2.3.1/24'
+set interfaces ethernet eth2 description 'VCPE PUBLIC IP'
+set interfaces ethernet eth2 mtu 1400
 set service ssh port '22'
-
-set nat source rule 100 outbound-interface 'eth0'
-set nat source rule 100 source address '192.168.0.0/24'
-set nat source rule 100 translation address masquerade
-
-set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 default-router '192.168.0.1'
-set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 dns-server '192.168.0.1'
-set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 domain-name 'internal-network'
-set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 lease '86400'
-
-set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 range 0 start 192.168.0.9
-set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 range 0 stop '192.168.0.254'
-
+set service dhcp-server shared-network-name LAN subnet 192.168.255.0/24 default-router '192.168.255.1'
+set service dhcp-server shared-network-name LAN subnet 192.168.255.0/24 dns-server '192.168.255.1'
+set service dhcp-server shared-network-name LAN subnet 192.168.255.0/24 domain-name 'internal-network'
+set service dhcp-server shared-network-name LAN subnet 192.168.255.0/24 lease '86400'
+set service dhcp-server shared-network-name LAN subnet 192.168.255.0/24 range 0 start 192.168.0.20
+set service dhcp-server shared-network-name LAN subnet 192.168.255.0/24 range 0 stop '192.168.0.30'
 set service dns forwarding cache-size '0'
 set service dns forwarding listen-on 'eth1'
 set service dns forwarding name-server '8.8.8.8'
 set service dns forwarding name-server '8.8.4.4'
-
-set firewall name OUTSIDE-IN default-action 'drop'
-set firewall name OUTSIDE-IN rule 10 action 'accept'
-set firewall name OUTSIDE-IN rule 10 state established 'enable'
-set firewall name OUTSIDE-IN rule 10 state related 'enable'
-
-set firewall name OUTSIDE-LOCAL default-action 'drop'
-set firewall name OUTSIDE-LOCAL rule 10 action 'accept'
-set firewall name OUTSIDE-LOCAL rule 10 state established 'enable'
-set firewall name OUTSIDE-LOCAL rule 10 state related 'enable'
-set firewall name OUTSIDE-LOCAL rule 20 action 'accept'
-set firewall name OUTSIDE-LOCAL rule 20 icmp type-name 'echo-request'
-set firewall name OUTSIDE-LOCAL rule 20 protocol 'icmp'
-set firewall name OUTSIDE-LOCAL rule 20 state new 'enable'
-set firewall name OUTSIDE-LOCAL rule 30 action 'drop'
-set firewall name OUTSIDE-LOCAL rule 30 destination port '22'
-set firewall name OUTSIDE-LOCAL rule 30 protocol 'tcp'
-set firewall name OUTSIDE-LOCAL rule 30 recent count '4'
-set firewall name OUTSIDE-LOCAL rule 30 recent time '60'
-set firewall name OUTSIDE-LOCAL rule 30 state new 'enable'
-set firewall name OUTSIDE-LOCAL rule 31 action 'accept'
-set firewall name OUTSIDE-LOCAL rule 31 destination port '22'
-set firewall name OUTSIDE-LOCAL rule 31 protocol 'tcp'
-set firewall name OUTSIDE-LOCAL rule 31 state new 'enable'
-
-set interfaces ethernet eth0 firewall in name 'OUTSIDE-IN'
-set interfaces ethernet eth0 firewall local name 'OUTSIDE-LOCAL'
-
-
+set service dns forwarding listen-address '192.168.255.1'
+set service dns forwarding allow-from '192.168.255.0/24'
+set nat source rule 100 outbound-interface 'eth2'
+set nat source rule 100 source address '192.168.255.0/24'
+set nat source rule 100 translation address masquerade
+set interfaces vxlan vxlan1 address 192.168.100.4/24
 set interfaces vxlan vxlan1 description 'VXLAN entre vclass OpenFlow y vcpe VyOS'
 set interfaces vxlan vxlan1 mtu 1400
 set interfaces vxlan vxlan1 ip arp-cache-timeout 180
 set interfaces vxlan vxlan1 vni 1
 set interfaces vxlan vxlan1 port 8472
 set interfaces vxlan vxlan1 remote 192.168.100.3
-set interfaces vxlan vxlan1 address 192.168.255.1/24
-
+set protocols static route 10.2.3.0/24 next-hop 10.2.3.1 distance '1'
+set protocols static route 172.17.0.0/16 next-hop 172.17.0.3 distance '1'
+set protocols static route 192.168.100.0/24 next-hop 192.168.100.4 distance '1'
+set protocols static route 192.168.255.0/24 next-hop 192.168.255.1 distance '1'
+set protocols static route 0.0.0.0/0 next-hop 10.2.3.254 distance '1'
 commit
 save
 exit
 "
 
 #sudo docker exec -it $VNF4 bash -c ""
+

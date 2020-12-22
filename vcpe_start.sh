@@ -65,31 +65,9 @@ sudo docker exec -it $VNF1 ovs-vsctl add-port br0 vxlan2
 sudo docker exec -it $VNF1 ifconfig vxlan1 up
 sudo docker exec -it $VNF1 ifconfig vxlan2 up
 
-## 2. En VNF:vcpe agregar un bridge y asociar interfaces.
-#Configurado desde el script de VyOS
-#sudo docker exec -it $VNF2 ovs-vsctl add-br br1
-#sudo docker exec -it $VNF2 /sbin/ifconfig br1 $VCPEPRIVIP/24
-#sudo docker exec -it $VNF2 ovs-vsctl add-port br1 vxlan1 -- set interface vxlan1 type=vxlan options:remote_ip=$IP11
-#sudo docker exec -it $VNF2 ifconfig br1 mtu 1400
-
-## 3. En VNF:vcpe asignar dirección IP a interfaz de salida.
-#sudo docker exec -it $VNF2 /sbin/ifconfig veth0 $VCPEPUBIP/24
-#sudo docker exec -it $VNF2 ip route del 0.0.0.0/0 via 172.17.0.1
-#sudo docker exec -it $VNF2 ip route add 0.0.0.0/0 via 10.2.3.254
-
-## 4. Iniciar Servidor DHCP 
-#echo "--"
-#echo "--DHCP Server Starting..."
-#if [ -f "$DHCPDCONF" ]; then
-#    echo "--Using $DHCPDCONF for DHCP"
-#    docker cp $DHCPDCONF $VNF2:/etc/dhcp/dhcpd.conf
-#else
-#    echo "--$DHCPCONF not found for DHCP, the container will use the default"
-#fi
-#sudo docker exec -it $VNF2 service isc-dhcp-server restart
-#sleep 10
 
 ## 5. En VNF:vcpe activar NAT para dar salida a Internet 
-#docker cp /usr/bin/vnx_config_nat  $VNF2:/usr/bin
+## ESTO LO DEJO PARA PROBAR, CREO QUE NO SE CONFIGURA DESDE AQUI
+docker cp /usr/bin/vnx_config_nat  $VNF2:/usr/bin
 #sudo docker exec -it $VNF2 /usr/bin/vnx_config_nat br1 veth0
 
