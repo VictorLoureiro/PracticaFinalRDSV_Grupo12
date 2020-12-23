@@ -1,12 +1,35 @@
 #!/bin/bash
 
+USAGE="
+Usage:
+
+configureVyOS <vnf_vyos_name> <vcpe_private_ip> <vcpe_public_ip>
+    being:
+        <vnf_vyos_name>: the name of the VyOS VNF to configure 
+        <vcpe_private_ip>: the private ip address for the vcpe
+        <vcpe_public_ip>: the public ip address for the vcpe (10.2.2.0/24)
+"
+
+#if [[ $# -ne 3 ]]; then
+#        echo ""       
+#    echo "ERROR: incorrect number of parameters"
+#    echo "$USAGE"
+#    exit 1
+#fi
+
+#VARIABLES
+VNF="$1"
+VCPEPRIVIP="$2"
+VCPEPUBIP="$3"
+
+
 #Variables a utilizar en VyOS, se puede cambiar para que se capturen
 VNF2="mn.dc1_vcpe-1-2-ubuntu-1" # Nombre del docker VyOS. Obtener con “docker ps”
 VNF4="mn.dc1_vcpe-2-2-ubuntu-1"
 
 HNAME='vyos'
 
-#docker exec -ti $VNF2 /bin/bash -c "
+#sudo docker exec -ti $VNF /bin/bash -c "
 sudo docker exec -it $VNF2 bash -c "
 su - vyos
 configure

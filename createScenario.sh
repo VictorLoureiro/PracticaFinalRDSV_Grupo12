@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 #Switches OVS para AccessNet y ExtNet
 sudo ovs-vsctl --if-exists del-br AccessNet
 sudo ovs-vsctl --if-exists del-br ExtNet
@@ -23,17 +22,13 @@ osm vnfd-create pck/vnf-vcpe.tar.gz
 osm vnfd-create pck/vnf-vclass.tar.gz
 #NS
 osm nsd-create pck/ns-vcpe.tar.gz
-
 #Definir NS en OSM:
 #Red residencial 1
-osm ns-create --ns_name vcpe-1 --nsd_name vCPE --vim_account emu-vim
+VCPE1="vcpe-1"
+osm ns-create --ns_name $VCPE1 --nsd_name vCPE --vim_account emu-vim
 #Red residencial 2
-osm ns-create --ns_name vcpe-2 --nsd_name vCPE --vim_account emu-vim
-
-VNF1="mn.dc1_vcpe-1-1-ubuntu-1"
-VNF2="mn.dc1_vcpe-1-2-ubuntu-1"
-VNF3="mn.dc1_vcpe-2-1-ubuntu-1"
-VNF4="mn.dc1_vcpe-2-2-ubuntu-1"
+VCPE1="vcpe-2"
+osm ns-create --ns_name $VCPE2 --nsd_name vCPE --vim_account emu-vim
 
 
 #LEVANTAR ESCENARIOS VNX
@@ -41,24 +36,21 @@ sudo vnx -f vnx/nfv3_home_lxc_ubuntu64.xml -t
 sudo vnx -f vnx/nfv3_server_lxc_ubuntu64.xml -t
 
 
+VNF1="mn.dc1_$VCPE1-1-ubuntu-1"
+VNF2="mn.dc1_$VCPE1-2-ubuntu-1"
+VNF3="mn.dc1_$VCPE2-1-ubuntu-1"
+VNF4="mn.dc1_$VCPE2-2-ubuntu-1"
+VCPEPRIVIP="192.168.255.1"
+VCPEPUBIP1="10.2.3.1/24"
+VCPEPUBIP2="10.2.3.2/24"
 #CONFIGURAR VYOS (DEJAR QoS para el final) [NAT Y DHCP] El script configura los dos VyOS
 #Configuracion de tunel VXLAN entre vclass y vcpe (Desde NFV VyOS)
-#./img/vnf-vyos/configureVyOS.sh
-
+#./configureVyOS.sh $VNF2 $VCPEPRIVIP $VCPEPUBIP1
+#./configureVyOS.sh $VNF4 $VCPEPRIVIP $VCPEPUBIP2
 
 #CREAR VXLANs
-#./vcpe-1.sh
-#./vcpe-2.sh
-
-
-#Para borrar --> GESTIONAR DESDE destroyScenario.sh :
-#vcpe_destroy.sh vcpe-1
-#vcpe_destroy.sh vcpe-2
-#osm nsd-delete vCPE
-#osm vnfd-delete vcpe
-#osm vnfd-delete vclass
-
-
+#./vcpe_start.sh $VCPE1 10.255.0.1 10.255.0.2
+#./vcpe_start.sh $VCPE2 10.255.0.3 10.255.0.4
 
 
 

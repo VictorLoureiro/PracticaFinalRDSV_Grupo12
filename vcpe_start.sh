@@ -3,17 +3,14 @@
 USAGE="
 Usage:
     
-vcpe_start <vcpe_name> <vnf_tunnel_ip> <home_tunnel_ip> <vcpe_private_ip> <vcpe_public_ip> <dhcpd_conf_file>
+vcpe_start <vcpe_name> <vnf_tunnel_ip> <home_tunnel_ip>
     being:
         <vcpe_name>: the name of the network service instance in OSM 
         <vnf_tunnel_ip>: the ip address for the vnf side of the tunnel
         <home_tunnel_ip>: the ip address for the home side of the tunnel
-        <vcpe_private_ip>: the private ip address for the vcpe
-        <vcpe_public_ip>: the public ip address for the vcpe (10.2.2.0/24)
-        <dhcpd_conf_file>: the dhcp file for the vcpe to give private addresses to the home network
 "
 
-if [[ $# -ne 6 ]]; then
+if [[ $# -ne 3 ]]; then
         echo ""       
     echo "ERROR: incorrect number of parameters"
     echo "$USAGE"
@@ -25,9 +22,7 @@ VNF2="mn.dc1_$1-2-ubuntu-1"
 
 VNFTUNIP="$2"
 HOMETUNIP="$3"
-VCPEPRIVIP="$4"
-VCPEPUBIP="$5"
-DHCPDCONF="$6"
+
 
 ETH11=`sudo docker exec -it $VNF1 ifconfig | grep eth1 | awk '{print $1}'`
 ETH21=`sudo docker exec -it $VNF2 ifconfig | grep eth1 | awk '{print $1}'`
