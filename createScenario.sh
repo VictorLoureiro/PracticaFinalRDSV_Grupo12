@@ -34,8 +34,8 @@ echo "OSM Onboarding..."
 sleep 10
 
 #LEVANTAR ESCENARIOS VNX
-#sudo vnx -f vnx/nfv3_home_lxc_ubuntu64.xml -t
-#sudo vnx -f vnx/nfv3_server_lxc_ubuntu64.xml -t
+sudo vnx -f vnx/nfv3_home_lxc_ubuntu64.xml -t
+sudo vnx -f vnx/nfv3_server_lxc_ubuntu64.xml -t
 
 
 #LAS VNF NO SE USAN, BORRARLO
@@ -48,14 +48,18 @@ VCPEPRIVIP="192.168.255.1"
 VCPEPUBIP1="10.2.3.1"
 VCPEPUBIP2="10.2.3.2"
 
-#CONFIGURAR VYOS (DEJAR QoS para el final) [NAT Y DHCP] El script configura los dos VyOS
-#Configuracion de tunel VXLAN entre vclass y vcpe (Desde NFV VyOS)
-#./configureVyOS.sh $VCPE1 $VCPEPRIVIP $VCPEPUBIP1
-#./configureVyOS.sh $VCPE2 $VCPEPRIVIP $VCPEPUBIP2
 
 #CREAR VXLANs
-#./vcpe_start.sh $VCPE1 10.255.0.1 10.255.0.2
-#./vcpe_start.sh $VCPE2 10.255.0.3 10.255.0.4
+./vcpe_start.sh $VCPE1 10.255.0.1 10.255.0.2
+./vcpe_start.sh $VCPE2 10.255.0.3 10.255.0.4
+
+
+#CONFIGURAR VYOS (DEJAR QoS para el final) [NAT Y DHCP] El script configura los dos VyOS
+#Configuracion de tunel VXLAN entre vclass y vcpe (Desde NFV VyOS)
+./configureVyOS.sh $VCPE1 $VCPEPRIVIP $VCPEPUBIP1
+./configureVyOS.sh $VCPE2 $VCPEPRIVIP $VCPEPUBIP2
+
+
 
 
 

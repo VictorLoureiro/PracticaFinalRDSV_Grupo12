@@ -32,7 +32,7 @@ IP21=`sudo docker exec -it $VNF2 hostname -I | awk '{printf "%s\n", $1}{print $2
 IPETH0=`sudo docker exec -it mn.dc1_vcpe-1-2-ubuntu-1 hostname -I | tr " " "\n" | grep 172.17.0`
 
 sudo docker exec -ti $VNF2 /bin/bash -c "
-su - vyos
+source /opt/vyatta/etc/functions/script-template
 configure
 set system host-name $HNAME
 set interfaces ethernet eth0 mtu 1400
