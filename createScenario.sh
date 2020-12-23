@@ -27,7 +27,7 @@ osm nsd-create pck/ns-vcpe.tar.gz
 VCPE1="vcpe-1"
 osm ns-create --ns_name $VCPE1 --nsd_name vCPE --vim_account emu-vim
 #Red residencial 2
-VCPE1="vcpe-2"
+VCPE2="vcpe-2"
 osm ns-create --ns_name $VCPE2 --nsd_name vCPE --vim_account emu-vim
 
 
