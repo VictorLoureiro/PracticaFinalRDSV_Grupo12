@@ -40,27 +40,18 @@ echo "--"
 echo "--Connecting vCPE service with AccessNet and ExtNet..."
 
 sudo ovs-docker add-port AccessNet veth0 $VNF1
-sudo ovs-docker add-port ExtNet eth2 $VNF2
 
 echo "--"
 echo "--Setting VNF..."
 echo "--"
 echo "--Bridge Creating..."
 
-## 1. En VNF:vclass agregar un bridge y asociar interfaces.
+##En VNF:vclass agregar un bridge y asociar interfaces.
 sudo docker exec -it $VNF1 ovs-vsctl add-br br0
 sudo docker exec -it $VNF1 ifconfig veth0 $VNFTUNIP/24
-#sudo docker exec -it $VNF1 ovs-vsctl add-port br0 vxlan1 -- set interface vxlan1 type=vxlan options:remote_ip=$HOMETUNIP
-#sudo docker exec -it $VNF1 ovs-vsctl add-port br0 vxlan2 -- set interface vxlan2 type=vxlan options:remote_ip=$IP21
 sudo docker exec -it $VNF1 ip link add vxlan1 type vxlan id 0 remote $HOMETUNIP dstport 4789 dev veth0
 sudo docker exec -it $VNF1 ip link add vxlan2 type vxlan id 1 remote $IP21 dstport 8472 dev eth1-0
 sudo docker exec -it $VNF1 ovs-vsctl add-port br0 vxlan1
 sudo docker exec -it $VNF1 ovs-vsctl add-port br0 vxlan2
 sudo docker exec -it $VNF1 ifconfig vxlan1 up
 sudo docker exec -it $VNF1 ifconfig vxlan2 up
-
-
-## 5. En VNF:vcpe activar NAT para dar salida a Internet 
-## ESTO LO DEJO PARA PROBAR, CREO QUE NO SE CONFIGURA DESDE AQUI
-docker cp /usr/bin/vnx_config_nat  $VNF2:/usr/bin
-#sudo docker exec -it $VNF2 /usr/bin/vnx_config_nat br1 veth0
