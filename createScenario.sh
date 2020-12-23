@@ -36,22 +36,24 @@ sudo vnx -f vnx/nfv3_home_lxc_ubuntu64.xml -t
 sudo vnx -f vnx/nfv3_server_lxc_ubuntu64.xml -t
 
 
+#LAS VNF NO SE USAN, BORRARLO
 VNF1="mn.dc1_$VCPE1-1-ubuntu-1"
 VNF2="mn.dc1_$VCPE1-2-ubuntu-1"
 VNF3="mn.dc1_$VCPE2-1-ubuntu-1"
 VNF4="mn.dc1_$VCPE2-2-ubuntu-1"
+
 VCPEPRIVIP="192.168.255.1"
 VCPEPUBIP1="10.2.3.1/24"
 VCPEPUBIP2="10.2.3.2/24"
 
 #CONFIGURAR VYOS (DEJAR QoS para el final) [NAT Y DHCP] El script configura los dos VyOS
 #Configuracion de tunel VXLAN entre vclass y vcpe (Desde NFV VyOS)
-./configureVyOS.sh $VNF2 $VCPEPRIVIP $VCPEPUBIP1
-./configureVyOS.sh $VNF4 $VCPEPRIVIP $VCPEPUBIP2
+./configureVyOS.sh $VCPE1 $VCPEPRIVIP $VCPEPUBIP1
+./configureVyOS.sh $VCPE2 $VCPEPRIVIP $VCPEPUBIP2
 
 #CREAR VXLANs
-#./vcpe_start.sh $VCPE1 10.255.0.1 10.255.0.2
-#./vcpe_start.sh $VCPE2 10.255.0.3 10.255.0.4
+./vcpe_start.sh $VCPE1 10.255.0.1 10.255.0.2
+./vcpe_start.sh $VCPE2 10.255.0.3 10.255.0.4
 
 
 

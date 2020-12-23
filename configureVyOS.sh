@@ -3,9 +3,9 @@
 USAGE="
 Usage:
 
-configureVyOS <vnf_vyos_name> <vcpe_private_ip> <vcpe_public_ip>
+configureVyOS <vcpe_name> <vcpe_private_ip> <vcpe_public_ip>
     being:
-        <vnf_vyos_name>: the name of the VyOS VNF to configure 
+        <vcpe_name>: the name of the network service instance in OSM 
         <vcpe_private_ip>: the private ip address for the vcpe
         <vcpe_public_ip>: the public ip address for the vcpe (10.2.2.0/24)
 "
@@ -18,18 +18,24 @@ if [[ $# -ne 3 ]]; then
 fi
 
 #VARIABLES
-VNF="$1"
+VNF1="mn.dc1_$1-1-ubuntu-1"
+VNF2="mn.dc1_$1-2-ubuntu-1"
 VCPEPRIVIP="$2"
 VCPEPUBIP="$3"
 HNAME='vyos'
 
-#sudo docker exec -ti $VNF /bin/bash -c "
-sudo docker exec -it $VNF bash -c "
+
+ETH11=`sudo docker exec -it $VNF1 ifconfig | grep eth1 | awk '{print $1}'`
+ETH21=`sudo docker exec -it $VNF2 ifconfig | grep eth1 | awk '{print $1}'`
+IP11=`sudo docker exec -it $VNF1 hostname -I | awk '{printf "%s\n", $1}{print $2}' | grep 192.168.100`
+IP21=`sudo docker exec -it $VNF2 hostname -I | awk '{printf "%s\n", $1}{print $2}' | grep 192.168.100`
+
+sudo docker exec -it $VNF2 bash -c "
 su - vyos
 configure
 set system host-name $HNAME
 set interfaces ethernet eth0 address dhcp
-set interfaces ethernet eth0 description 'OUTSIDE'
+set interfaces ethernet eth0 description 'MANAGEMENT'
 set interfaces ethernet eth0 mtu 1400
 set interfaces ethernet eth2 address $VCPEPUBIP/24
 set interfaces ethernet eth2 description 'VCPE PUBLIC IP'
@@ -40,7 +46,7 @@ set interfaces vxlan vxlan1 mtu 1400
 set interfaces vxlan vxlan1 ip arp-cache-timeout 180
 set interfaces vxlan vxlan1 vni 1
 set interfaces vxlan vxlan1 port 8472
-set interfaces vxlan vxlan1 remote 192.168.100.3
+set interfaces vxlan vxlan1 remote $IP11
 set service ssh port '22'
 set service dhcp-server shared-network-name LAN subnet 192.168.255.0/24 default-router $VCPEPRIVIP
 set service dhcp-server shared-network-name LAN subnet 192.168.255.0/24 dns-server $VCPEPRIVIP/24
