@@ -30,6 +30,7 @@ RUN apt-get update \
 COPY dhcpd.conf /etc/dhcp/dhcpd.conf
 COPY isc-dhcp-server /etc/default/isc-dhcp-server
 #HACER UN COPY CON EL FICHERO qos_simple_switch_13.py
+#COPY qos_simple_switch_13.py /ver/la/ruta/el/proximo/dia
 
 #Install isc-dhcp-server
 #RUN apt-get update

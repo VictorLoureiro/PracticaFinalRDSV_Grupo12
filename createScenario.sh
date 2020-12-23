@@ -36,17 +36,9 @@ VNF3="mn.dc1_vcpe-2-1-ubuntu-1"
 VNF4="mn.dc1_vcpe-2-2-ubuntu-1"
 
 
-#Para borrar --> GESTIONAR DESDE destroyScenario.sh :
-#vcpe_destroy.sh vcpe-1
-#vcpe_destroy.sh vcpe-2
-#osm nsd-delete vCPE
-#osm vnfd-delete vcpe
-#osm vnfd-delete vclass
-
-
 #LEVANTAR ESCENARIOS VNX
-#sudo vnx -f vnx/nfv3_home_lxc_ubuntu64.xml -t
-#sudo vnx -f vnx/nfv3_server_lxc_ubuntu64.xml -t
+sudo vnx -f vnx/nfv3_home_lxc_ubuntu64.xml -t
+sudo vnx -f vnx/nfv3_server_lxc_ubuntu64.xml -t
 
 
 #CONFIGURAR VYOS (DEJAR QoS para el final) [NAT Y DHCP] El script configura los dos VyOS
@@ -57,6 +49,14 @@ VNF4="mn.dc1_vcpe-2-2-ubuntu-1"
 #CREAR VXLANs
 #./vcpe-1.sh
 #./vcpe-2.sh
+
+
+#Para borrar --> GESTIONAR DESDE destroyScenario.sh :
+#vcpe_destroy.sh vcpe-1
+#vcpe_destroy.sh vcpe-2
+#osm nsd-delete vCPE
+#osm vnfd-delete vcpe
+#osm vnfd-delete vclass
 
 
 

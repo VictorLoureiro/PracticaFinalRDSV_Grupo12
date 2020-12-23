@@ -45,7 +45,6 @@ echo "--"
 echo "--Connecting vCPE service with AccessNet and ExtNet..."
 
 sudo ovs-docker add-port AccessNet veth0 $VNF1
-#sudo ovs-docker add-port ExtNet veth0 $VNF2
 sudo ovs-docker add-port ExtNet eth2 $VNF2
 
 echo "--"
@@ -70,4 +69,3 @@ sudo docker exec -it $VNF1 ifconfig vxlan2 up
 ## ESTO LO DEJO PARA PROBAR, CREO QUE NO SE CONFIGURA DESDE AQUI
 docker cp /usr/bin/vnx_config_nat  $VNF2:/usr/bin
 #sudo docker exec -it $VNF2 /usr/bin/vnx_config_nat br1 veth0
-

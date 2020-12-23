@@ -20,7 +20,6 @@ VNF1="mn.dc1_$1-1-ubuntu-1"
 VNF2="mn.dc1_$1-2-ubuntu-1"
 
 sudo ovs-docker del-port AccessNet veth0 $VNF1
-sudo ovs-docker del-port ExtNet veth0 $VNF2
+sudo ovs-docker del-port ExtNet eth2 $VNF2
 
 osm ns-delete $1
-
