@@ -49,9 +49,9 @@ VCPEPUBIP1="10.2.3.1"
 VCPEPUBIP2="10.2.3.2"
 
 
-sudo ovs-docker add-port ExtNet eth2 $VNF2
-sudo ovs-docker add-port ExtNet eth2 $VNF4
-
+#CREAR VXLANs
+./vcpe_start.sh $VCPE1 10.255.0.1 10.255.0.2
+./vcpe_start.sh $VCPE2 10.255.0.3 10.255.0.4
 
 #CONFIGURAR VYOS (DEJAR QoS para el final) [NAT Y DHCP] El script configura los dos VyOS
 #Configuracion de tunel VXLAN entre vclass y vcpe (Desde NFV VyOS)
@@ -59,9 +59,7 @@ sudo ovs-docker add-port ExtNet eth2 $VNF4
 ./configureVyOS.sh $VCPE2 $VCPEPRIVIP $VCPEPUBIP2
 
 
-#CREAR VXLANs
-./vcpe_start.sh $VCPE1 10.255.0.1 10.255.0.2
-./vcpe_start.sh $VCPE2 10.255.0.3 10.255.0.4
+
 
 
 #QoS e IPv6

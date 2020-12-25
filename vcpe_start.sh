@@ -24,8 +24,8 @@ VNFTUNIP="$2"
 HOMETUNIP="$3"
 
 
-ETH11=`sudo docker exec -it $VNF1 ifconfig | grep eth1 | awk '{print $1}'`
-ETH21=`sudo docker exec -it $VNF2 ifconfig | grep eth1 | awk '{print $1}'`
+ETH11=`sudo docker exec -it $VNF1 ifconfig | grep eth1 | awk '{print $1}' | tr -d ':'`
+ETH21=`sudo docker exec -it $VNF2 ifconfig | grep eth1 | awk '{print $1}' | tr -d ':'`
 IP11=`sudo docker exec -it $VNF1 hostname -I | awk '{printf "%s\n", $1}{print $2}' | grep 192.168.100`
 IP21=`sudo docker exec -it $VNF2 hostname -I | awk '{printf "%s\n", $1}{print $2}' | grep 192.168.100`
 
@@ -40,6 +40,7 @@ echo "--"
 echo "--Connecting vCPE service with AccessNet and ExtNet..."
 
 sudo ovs-docker add-port AccessNet veth0 $VNF1
+sudo ovs-docker add-port ExtNet eth2 $VNF2
 
 echo "--"
 echo "--Setting VNF..."
@@ -50,7 +51,7 @@ echo "--Bridge Creating..."
 sudo docker exec -it $VNF1 ovs-vsctl add-br br0
 sudo docker exec -it $VNF1 ifconfig veth0 $VNFTUNIP/24
 sudo docker exec -it $VNF1 ip link add vxlan1 type vxlan id 0 remote $HOMETUNIP dstport 4789 dev veth0
-sudo docker exec -it $VNF1 ip link add vxlan2 type vxlan id 1 remote $IP21 dstport 8472 dev eth1-0
+sudo docker exec -it $VNF1 ip link add vxlan2 type vxlan id 1 remote $IP21 dstport 8472 dev $ETH11
 sudo docker exec -it $VNF1 ovs-vsctl add-port br0 vxlan1
 sudo docker exec -it $VNF1 ovs-vsctl add-port br0 vxlan2
 sudo docker exec -it $VNF1 ifconfig vxlan1 up
