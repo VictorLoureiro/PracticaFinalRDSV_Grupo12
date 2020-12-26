@@ -34,6 +34,11 @@ echo "OSM Onboarding..."
 sleep 10
 
 #LEVANTAR ESCENARIOS VNX
+#ARRANCAR IMAGEN EN MODO DIRECTO
+#sudo vnx --modify-rootfs /usr/share/vnx/filesystems/vnx_rootfs_lxc_ubuntu64-18.04-v025-vnxlab/
+#Hacer login con root/xxxx e instalar los paquetes deseados. (iperf3)
+#Parar el contenedor con:
+#halt -p
 sudo vnx -f vnx/nfv3_home_lxc_ubuntu64.xml -t
 sudo vnx -f vnx/nfv3_server_lxc_ubuntu64.xml -t
 
