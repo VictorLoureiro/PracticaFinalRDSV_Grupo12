@@ -85,13 +85,17 @@
 ## PASOS SEGUIDOS
 
 1. Modificar ficheros Dockerfile para generar las nuevas imagenes de Docker
+
 	1.1. vnf-vyos basado en el router Vyos:
+	
 	```sh
 	FROM vyos/rolling:1.3 
 	RUN mkdir /config 
 	CMD /sbin/init
 	```
+	
 	1.2. vnf-img añadimos los nuevos paquetes necesarios:
+	
 		1.2.1.  Cambiar version a ubuntu:bionic
 		1.2.2. Instalamos paquetes ryu-bin, iperf3 e iproute2
 
