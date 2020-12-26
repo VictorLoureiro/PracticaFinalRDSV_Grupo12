@@ -31,6 +31,7 @@
 	git clone https://github.com/RAULTG97/PracticaFinalRDSV_Grupo12
   ```
 3. Antes de ejecutar ningún script, debemos modificar las imágenes utilizadas por VNX para que incluyan iperf3. Para ello (en la práctica, se pueden probar las colas de QoS con iperf normal):
+
 	3.1. Arrancamos la imagen en modo directo
 	  ```sh
    sudo vnx --modify-rootfs /usr/share/vnx/filesystems/vnx_rootfs_lxc_ubuntu64-18.04-v025-vnxlab/
@@ -86,7 +87,7 @@
 1. Modificar ficheros Dockerfile para generar las nuevas imagenes de Docker
 	1.1. vnf-vyos basado en el router Vyos:
 	```sh
-	  FROM vyos/rolling:1.3 
+	FROM vyos/rolling:1.3 
 	RUN mkdir /config 
 	CMD /sbin/init
 	```
@@ -97,37 +98,53 @@
 2. Cargamos los paquetes del directorio pck en OSM para modificar los descriptores y que utilicen las nuevas imágenes de Docker. Una vez modificados los descriptores, generamos los nuevos paquetes para que en las futuras ejecuciones se haga el onboarding a través de la línea de comandos de OSM.
 
 3. Ejecución del script createScenario.sh por pasos:
+
 	3.1. Iniciamos los OVS de AccessNet y ExtNet (idéntico a init.sh de la practica 4)
+	
 		sudo ovs-vsctl --if-exists del-br AccessNet
 		sudo ovs-vsctl --if-exists del-br ExtNet
 		sudo ovs-vsctl add-br AccessNet
 		sudo ovs-vsctl add-br ExtNet
+		
 	3.2. Creamos las imagenes de docker
+	
 		sudo docker build -t vnf-vyos img/vnf-vyos
 		sudo docker build -t vnf-img img/vnf-img
+		
 	3.3. Onboarding de OSM
-		 osm vnfd-create pck/vnf-vcpe.tar.gz
+	
+		osm vnfd-create pck/vnf-vcpe.tar.gz
 		osm vnfd-create pck/vnf-vclass.tar.gz
 		osm nsd-create pck/ns-vcpe.tar.gz
 		osm ns-create --ns_name vcpe-1 --nsd_name vCPE --vim_account emu-vim
 		osm ns-create --ns_name vcpe-2 --nsd_name vCPE --vim_account emu-vim
+		
 	3.4. Arrancar escenarios de VNX
+	
 		sudo vnx -f vnx/nfv3_home_lxc_ubuntu64.xml -t
 		sudo vnx -f vnx/nfv3_server_lxc_ubuntu64.xml -t
+		
 	3.5. Crear VXLAN entre red residencial y VCLASS
+	
 		Script vcpe_start.sh
+		
 	3.6. Configuracion de VyOS
+	
 		Script configureVyOS.sh
+		
 	3.7. Gestion de la calidad de servicio
+	
 		Script setQoS.sh
 		TO DO!
 
 4. Script vcpe_start.sh
+
 	- Recibe como parametros el nombre de la instancia de vcpe, y las dos direcciones IP del tunel VXLAN a definir
 	- Define en vclass dos VXLAN, para comunicarse con la red residencial y con el vcpe
 	- Crea eth2 en vcpe VyOS, interfaz para conectarse con ExtNet
 
 5. Script configureVyos.sh
+
 	- Recibe como parametros el nombre de la instancia de vcpe, y las dos direcciones IP router vcpe (privada y publica)
 	- Configura la VXLAN entre entre vcpe y vclass
 	- Define la interfaz eth2 para conectarse a ExtNet y así poder comunicarse con la red de servidores de VNX e internet
