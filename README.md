@@ -1,42 +1,139 @@
-# PracticaFinalRDSV_Grupo12
-Desarrollo de la práctica final de la asignatura RDSV - Curso 2020/2021
+# Practica Final RDSV Grupo12
+*Desarrollo de la práctica final de la asignatura RDSV - Curso 2020/2021*
+##Autores :
+- Raúl Torres García
+- Alejandro Vargas Perez
+- Victor Loureiro Sancho
+------------
+##Escenario:
+![Escenario](https://github.com/RAULTG97/PracticaFinalRDSV_Grupo12/blob/main/PracticaFinalRDSV.png)
 
-PREPARACION ESCENARIO OSM-VNX
+------------
+##Lo que falta por hacer:
+- Conexión al exterior desde los hosts h1X y h2X. No hace ping ni a Internet ni a 10.2.2.1 (interfaz de r1 con Internet). Este último problema se ha resuelto con un apaño en el routing de VyOS, pero debemos revisarlo (correo enviado)
+- QoS: tenemos una version inicial similar a la de la práctica 2.5.
+	- Ver que dirección IP utilizamos para el controller (Actualmente está en 127.0.0.1). La idea es que este controller nos sirva para controlar tambien los brgX de VNX
+	- Ver como definimos las reglas, si se establece para todos los puertos UDP o solo para el 5002 (igual que en la practica)
+	- Ver como definimos los ovs de VNX para que sean controlados por el controller de VCLASS y asi podamos gestionar la QoS de subida
+- IPv6: TO DO
+- DHCPv6: TO DO
 
-PASOS DE INICIO:
+------------
+##RECOMENDACIONES PREVIAS
+1. Abrir un terminal y ejecutar:
+  ```sh
+   /lab/rdsv/rdsv-get-and-install-vnxsdnnfvlab
+  ```
+2. Acceder al directorio compartido y clonar el repositorio, para tenerlo accesible desde la máquina virtual arrancada en virtualbox:
+  ```sh
+    cd shared
+	git clone https://github.com/RAULTG97/PracticaFinalRDSV_Grupo12
+  ```
+3. Antes de ejecutar ningún script, debemos modificar las imágenes utilizadas por VNX para que incluyan iperf3. Para ello (en la práctica, se pueden probar las colas de QoS con iperf normal):
+	3.1. Arrancamos la imagen en modo directo
+	  ```sh
+   sudo vnx --modify-rootfs /usr/share/vnx/filesystems/vnx_rootfs_lxc_ubuntu64-18.04-v025-vnxlab/
+  ```
+	3.2. Hacemos login con root/xxxx e instalamos los paquetes deseados
+	 ```sh
+   sudo apt-get install iperf3
+  ```
+	3.3. Paramos el contenedor:
+	  ```sh
+   halt -p
+ 	 ```
+------------
+##ARRANCAR ESCENARIO
+- Ejecutamos el script de creación del escenario:
+ ```sh
+  cd shared/PracticaFinalRDSV_Grupo12
+  ./createScenario.sh
+```
 
-	1. Iniciar y enlazar vim-emu con OSM (si no ha sido arrancado)
+  ------------
+##BORRAR ESCENARIO
+- Ejecutamos el script de creación del escenario:
+  ```sh
+  cd shared/PracticaFinalRDSV_Grupo12
+  ./destroyScenario.sh nombreInstanciaVCPE
+  ```
+- Ejemplo:
+  ```sh
+  ./destroyScenario.sh vcpe-1
+  ```
 
-	2. Crear imagen Docker mediante fichero Dockerfile que se encuentra en el Directorio "vnf-img". Es la imagen que utilizan las VNFs en OSM.
-
-		NOTA: El nombre que se le asigna al imagen debe ser: vnf-img
-
-		Comando para crear imagen: "sudo docker build -t vnf-img ."
-
-    3. Ejecutar init.sh para crear los switches "externos" a OSM: AccessNet y ExtNet
-
-    4. Arrancar los escenarios VNX de la red de residencial (*home*) y del servidor (*server*)
-
-	4. Realizar el proceso de onboarding de los paquetes VNF del escenario en OSM
-
-   	5. Instanciar el servicio para home1 en OSM
-
-		NOTA: El nombre del servicio debe ser "vcpe-1" para que el script se ejecute correctamente
-
-	6. Ejecutar script "vcpe1.sh" para configurar y enlazar el servicio desplegado en OSM con los escenariois VNX
-
-	7. Verificar en los Hosts de home1 (H11, H12) de VNX si han sido asignadas las direcciones IP en interfaz "Eth1" por el servidor DHCP.
-
-	8. Si no poseen direcciones IP, ejecutar en cada Host el comando: dhclient
-
-	9. Verificar conectividad entre Hosts (H11, H12) con el servidor (S1)
-
-    10. Instanciar, configurar y verificar para home2
+------------
+##REQUISITOS
+- Utilizar un contenedor VyOS virtualizado como router residencial (vCPE)
+- Conectividad IPv4 desde la red residencial hacia Internet. Uso de doble NAT: vCPE y r1 
+- Sustituir el switch de vclass por un conmutador controlado por OpenFlow
+- Añadir soporte de QoS implementado mediante SDN con Ryu. Gestión de la calidad de servicio en la red de acceso mediante la API REST de Ryu controlando vclass 
+	- Para limitar el ancho de banda de bajada hacia la red residencial 
+- Despliegue para dos redes residenciales
+- Todo automatizado mediante OSM y scripts 
+	- Incluyendo el on-boarding de NS/VNFs y la instanciación de NS mediante línea de comandos
+- Añadir algunos servicios adicionales
+	- Sustituir el switch de brgX por un conmutador controlado por OpenFlow desde el Ryu 
+		- Incluyendo la gestión de la calidad de servicio desde Ryu, controlando el brgX, para limitar el ancho de banda de subida desde la red residencial
+	- Soporte IPv6
+	- DHCP para IPv6
 
 
-FINALIZAR ESCENARIO:
+------------
+##PASOS SEGUIDOS
 
-	11. Ejecutar vcpe_destroy.sh con parámetro el nombre de servicio que se quiere parar
+1. Modificar ficheros Dockerfile para generar las nuevas imagenes de Docker
+	1.1. vnf-vyos basado en el router Vyos:
+```sh
+  FROM vyos/rolling:1.3 
+RUN mkdir /config 
+CMD /sbin/init
+```
+	1.2. vnf-img añadimos los nuevos paquetes necesarios:
+		1.2.1.  Cambiar version a ubuntu:bionic
+		1.2.2. Instalamos paquetes ryu-bin, iperf3 e iproute2
 
-    12. Parar los escnarios VNX
+2. Cargamos los paquetes del directorio pck en OSM para modificar los descriptores y que utilicen las nuevas imágenes de Docker. Una vez modificados los descriptores, generamos los nuevos paquetes para que en las futuras ejecuciones se haga el onboarding a través de la línea de comandos de OSM.
 
+3. Ejecución del script createScenario.sh por pasos:
+	3.1. Iniciamos los OVS de AccessNet y ExtNet (idéntico a init.sh de la practica 4)
+		sudo ovs-vsctl --if-exists del-br AccessNet
+		sudo ovs-vsctl --if-exists del-br ExtNet
+		sudo ovs-vsctl add-br AccessNet
+		sudo ovs-vsctl add-br ExtNet
+	3.2. Creamos las imagenes de docker
+		sudo docker build -t vnf-vyos img/vnf-vyos
+		sudo docker build -t vnf-img img/vnf-img
+	3.3. Onboarding de OSM
+		 osm vnfd-create pck/vnf-vcpe.tar.gz
+		osm vnfd-create pck/vnf-vclass.tar.gz
+		osm nsd-create pck/ns-vcpe.tar.gz
+		osm ns-create --ns_name vcpe-1 --nsd_name vCPE --vim_account emu-vim
+		osm ns-create --ns_name vcpe-2 --nsd_name vCPE --vim_account emu-vim
+	3.4. Arrancar escenarios de VNX
+		sudo vnx -f vnx/nfv3_home_lxc_ubuntu64.xml -t
+		sudo vnx -f vnx/nfv3_server_lxc_ubuntu64.xml -t
+	3.5. Crear VXLAN entre red residencial y VCLASS
+		Script vcpe_start.sh
+	3.6. Configuracion de VyOS
+		Script configureVyOS.sh
+	3.7. Gestion de la calidad de servicio
+		Script setQoS.sh
+		TO DO!
+
+4. Script vcpe_start.sh
+	- Recibe como parametros el nombre de la instancia de vcpe, y las dos direcciones IP del tunel VXLAN a definir
+	- Define en vclass dos VXLAN, para comunicarse con la red residencial y con el vcpe
+	- Crea eth2 en vcpe VyOS, interfaz para conectarse con ExtNet
+
+5. Script configureVyos.sh
+	- Recibe como parametros el nombre de la instancia de vcpe, y las dos direcciones IP router vcpe (privada y publica)
+	- Configura la VXLAN entre entre vcpe y vclass
+	- Define la interfaz eth2 para conectarse a ExtNet y así poder comunicarse con la red de servidores de VNX e internet
+	- Gestiona el servidor DHCP para que los hosts de las redes residenciales puedan obtener direcciones IP en la interfaz eth1 al ejecutar dhclient
+	- Se define un SNAT en la eth2
+	- Ruta IP por defecto hacia 10.2.3.254 (router r1)
+
+6. Script setQoS.sh
+**	TO DO
+**
