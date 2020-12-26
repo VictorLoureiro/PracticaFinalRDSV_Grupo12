@@ -1,15 +1,16 @@
 # Practica Final RDSV Grupo12
 *Desarrollo de la práctica final de la asignatura RDSV - Curso 2020/2021*
-##Autores :
+## Autores :
 - Raúl Torres García
 - Alejandro Vargas Perez
 - Victor Loureiro Sancho
 ------------
-##Escenario:
+
+## Escenario:
 ![Escenario](https://github.com/RAULTG97/PracticaFinalRDSV_Grupo12/blob/main/PracticaFinalRDSV.png)
 
 ------------
-##Lo que falta por hacer:
+## Lo que falta por hacer:
 - Conexión al exterior desde los hosts h1X y h2X. No hace ping ni a Internet ni a 10.2.2.1 (interfaz de r1 con Internet). Este último problema se ha resuelto con un apaño en el routing de VyOS, pero debemos revisarlo (correo enviado)
 - QoS: tenemos una version inicial similar a la de la práctica 2.5.
 	- Ver que dirección IP utilizamos para el controller (Actualmente está en 127.0.0.1). La idea es que este controller nos sirva para controlar tambien los brgX de VNX
@@ -19,7 +20,7 @@
 - DHCPv6: TO DO
 
 ------------
-##RECOMENDACIONES PREVIAS
+## RECOMENDACIONES PREVIAS
 1. Abrir un terminal y ejecutar:
   ```sh
    /lab/rdsv/rdsv-get-and-install-vnxsdnnfvlab
@@ -33,25 +34,25 @@
 	3.1. Arrancamos la imagen en modo directo
 	  ```sh
    sudo vnx --modify-rootfs /usr/share/vnx/filesystems/vnx_rootfs_lxc_ubuntu64-18.04-v025-vnxlab/
-  ```
+  	```
 	3.2. Hacemos login con root/xxxx e instalamos los paquetes deseados
 	 ```sh
    sudo apt-get install iperf3
-  ```
+	  ```
 	3.3. Paramos el contenedor:
 	  ```sh
-   halt -p
+	   halt -p
  	 ```
 ------------
-##ARRANCAR ESCENARIO
+## ARRANCAR ESCENARIO
 - Ejecutamos el script de creación del escenario:
- ```sh
-  cd shared/PracticaFinalRDSV_Grupo12
-  ./createScenario.sh
-```
+	 ```sh
+	  cd shared/PracticaFinalRDSV_Grupo12
+	  ./createScenario.sh
+	```
 
   ------------
-##BORRAR ESCENARIO
+## BORRAR ESCENARIO
 - Ejecutamos el script de creación del escenario:
   ```sh
   cd shared/PracticaFinalRDSV_Grupo12
@@ -63,7 +64,7 @@
   ```
 
 ------------
-##REQUISITOS
+## REQUISITOS
 - Utilizar un contenedor VyOS virtualizado como router residencial (vCPE)
 - Conectividad IPv4 desde la red residencial hacia Internet. Uso de doble NAT: vCPE y r1 
 - Sustituir el switch de vclass por un conmutador controlado por OpenFlow
@@ -80,15 +81,15 @@
 
 
 ------------
-##PASOS SEGUIDOS
+## PASOS SEGUIDOS
 
 1. Modificar ficheros Dockerfile para generar las nuevas imagenes de Docker
 	1.1. vnf-vyos basado en el router Vyos:
-```sh
-  FROM vyos/rolling:1.3 
-RUN mkdir /config 
-CMD /sbin/init
-```
+	```sh
+	  FROM vyos/rolling:1.3 
+	RUN mkdir /config 
+	CMD /sbin/init
+	```
 	1.2. vnf-img añadimos los nuevos paquetes necesarios:
 		1.2.1.  Cambiar version a ubuntu:bionic
 		1.2.2. Instalamos paquetes ryu-bin, iperf3 e iproute2
