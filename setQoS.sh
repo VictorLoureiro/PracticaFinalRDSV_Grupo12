@@ -36,10 +36,10 @@ VNF2="mn.dc1_$1-2-ubuntu-1"
 #UNA ALTERNATIVA A ESTO ES UTILIZAR UN DHCP QUE ASIGNE DIRECCIONES ESTATICAS (VER VYOS)
 IPVCLASSETH0=`sudo docker exec -it $VNF1 hostname -I | tr " " "\n" | grep 172.17.0`
 #DIRECCIONES IP ASIGNADAS A LOS HOSTS
-IPH11=`sudo vnx -f ONOS-SDN-IP.xml -x get-h11-ip | grep 192.168.255`
-IPH12=`sudo vnx -f ONOS-SDN-IP.xml -x get-h12-ip | grep 192.168.255`
-IPH21=`sudo vnx -f ONOS-SDN-IP.xml -x get-h21-ip | grep 192.168.255`
-IPH22=`sudo vnx -f ONOS-SDN-IP.xml -x get-h22-ip | grep 192.168.255`
+IPH11=`sudo vnx -f vnx/nfv3_home_lxc_ubuntu64.xml -x get-h11-ip | grep 192.168.255`
+IPH12=`sudo vnx -f vnx/nfv3_home_lxc_ubuntu64.xml -x get-h12-ip | grep 192.168.255`
+IPH21=`sudo vnx -f vnx/nfv3_home_lxc_ubuntu64.xml -x get-h21-ip | grep 192.168.255`
+IPH22=`sudo vnx -f vnx/nfv3_home_lxc_ubuntu64.xml -x get-h22-ip | grep 192.168.255`
 
 
 sudo docker exec -it $VNF1 sed '/OFPFlowMod(/,/)/s/)/, table_id=1)/' /usr/lib/python3/dist-packages/ryu/app/simple_switch_13.py > qos_simple_switch_13.py
