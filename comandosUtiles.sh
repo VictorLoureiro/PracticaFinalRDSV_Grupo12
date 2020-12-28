@@ -20,3 +20,8 @@ docker exec vim-emu vim-emu compute list
 
 # connect to ping VNF container:
 docker exec -it mn.dc1_test-nsi.ping.1.ubuntu /bin/bash
+
+VNF1="mn.dc1_$VCPE1-1-ubuntu-1"
+VNF2="mn.dc1_$VCPE1-2-ubuntu-1"
+VNF3="mn.dc1_$VCPE2-1-ubuntu-1"
+VNF4="mn.dc1_$VCPE2-2-ubuntu-1"

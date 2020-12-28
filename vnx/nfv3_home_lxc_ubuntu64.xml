@@ -41,10 +41,7 @@ SPAIN
   </global>
     
   <net name="virbr0" mode="virtual_bridge" managed="no"/>
-
   <net name="AccessNet" mode="openvswitch" managed="no"/>
-  <!--net name="AccessNet" mode="openvswitch" hwaddr="00:00:00:00:00:01" controller="tcp:127.0.0.1:6633" of_version="OpenFlow10" fail_mode="secure"> -->
-
   <net name="home1net" mode="virtual_bridge" />
   <net name="home2net" mode="virtual_bridge" />
   
@@ -59,6 +56,10 @@ SPAIN
        sed -i -e '/iface eth1 inet static/a \   mtu 1400' /etc/network/interfaces
        echo "alias www='chromium-browser --no-sandbox > /dev/null 2>&amp;1 &amp;'" >> /root/.bash_aliases
     </exec>
+    <!-- Get h11 IP -->
+    <exec seq="get-h11-ip" type="verbatim">
+        hostname -I | awk '{printf "%s\n", $1}{print $2}' | grep 192.168.255
+    </exec>
   </vm>   
   <vm name="h12" type="lxc" exec_mode="lxc-attach" arch="x86_64">
     <filesystem type="cow">/usr/share/vnx/filesystems/rootfs_lxc_ubuntu64</filesystem>
@@ -70,6 +71,10 @@ SPAIN
        ifconfig eth1 mtu 1400
        sed -i -e '/iface eth1 inet static/a \   mtu 1400' /etc/network/interfaces
        echo "alias www='chromium-browser --no-sandbox > /dev/null 2>&amp;1 &amp;'" >> /root/.bash_aliases
+    </exec>
+    <!-- Get h12 IP -->
+    <exec seq="get-h12-ip" type="verbatim">
+        hostname -I | awk '{printf "%s\n", $1}{print $2}' | grep 192.168.255
     </exec>
   </vm> 
   <vm name="brg1" type="lxc" exec_mode="lxc-attach" arch="x86_64">
@@ -85,16 +90,34 @@ SPAIN
         ovs-vsctl add-br br0
         ovs-vsctl add-port br0 eth1
         ovs-vsctl add-port br0 vxlan1 -- set interface vxlan1 type=vxlan options:remote_ip=10.255.0.1
-         <!--
+    </exec>
+    <!-- Configure QoS -->
+    <exec seq="config-QoS-controller-net1" type="verbatim">
+      <!-- TO DO
+      CAMBIAR ESTA PARTE
+        service openvswitch-switch start
+        sleep 5
+        ovs-vsctl add-br br0
+        ovs-vsctl add-port br0 eth1
+        ovs-vsctl add-port br0 vxlan1 -- set interface vxlan1 type=vxlan options:remote_ip=10.255.0.1
+      HASTA AQUI >>>
 
+        sed '/OFPFlowMod(/,/)/s/)/, table_id=1)/' /usr/lib/python3/dist-packages/ryu/app/simple_switch_13.py > qos_simple_switch_13.py 
+        ryu-manager ryu.app.rest_qos ryu.app.rest_conf_switch ./qos_simple_switch_13.py
         ovs-vsctl set bridge br0 protocols=OpenFlow10,OpenFlow12,OpenFlow13
         ovs-vsctl set-fail-mode br0 secure
         ovs-vsctl set bridge br0 other-config:datapath-id=0000000000000001
-        ovs-vsctl add-port br0 eth1
-        ovs-vsctl add-port br0 eth2
-        ovs-vsctl set-controller br0 tcp:172.17.2.100:6633
+        ovs-vsctl set-controller br0 tcp:127.0.0.1:6633
         ovs-vsctl set-manager ptcp:6632
       -->
+    </exec>
+    <exec seq="config-QoS-rules-net1" type="verbatim">
+      <!--
+    curl -X PUT -d '"tcp:127.0.0.1:6632"' http://127.0.0.1:8080/v1.0/conf/switches/0000000000000001/ovsdb_addr 
+    curl -X POST -d '{"port_name": "vxlan1", "type": "linux-htb", "max_rate": "6000000", "queues": [{"max_rate": "2000000"}, {"min_rate": "2000000"}]}' http://127.0.0.1:8080/qos/queue/0000000000000001 
+    curl -X POST -d '{"match": {"nw_src": "192.168.255.20", "nw_proto": "UDP", "udp_dst": "5002"}, "actions":{"queue": "1"}}' http://127.0.0.1:8080/qos/rules/0000000000000001 
+    curl -X POST -d '{"match": {"nw_src": "192.168.255.21", "nw_proto": "UDP", "udp_dst": "5002"}, "actions":{"queue": "0"}}' http://127.0.0.1:8080/qos/rules/0000000000000001
+    -->
     </exec>
   </vm>
   <vm name="h21" type="lxc" exec_mode="lxc-attach" arch="x86_64">
@@ -108,6 +131,10 @@ SPAIN
        sed -i -e '/iface eth1 inet static/a \   mtu 1400' /etc/network/interfaces
        echo "alias www='chromium-browser --no-sandbox > /dev/null 2>&amp;1 &amp;'" >> /root/.bash_aliases
     </exec>
+    <!-- Get h21 IP -->
+    <exec seq="get-h21-ip" type="verbatim">
+        hostname -I | awk '{printf "%s\n", $1}{print $2}' | grep 192.168.255
+    </exec>
   </vm>   
   <vm name="h22" type="lxc" exec_mode="lxc-attach" arch="x86_64">
     <filesystem type="cow">/usr/share/vnx/filesystems/rootfs_lxc_ubuntu64</filesystem>
@@ -119,6 +146,10 @@ SPAIN
        ifconfig eth1 mtu 1400
        sed -i -e '/iface eth1 inet static/a \   mtu 1400' /etc/network/interfaces
        echo "alias www='chromium-browser --no-sandbox > /dev/null 2>&amp;1 &amp;'" >> /root/.bash_aliases
+    </exec>
+    <!-- Get h22 IP -->
+    <exec seq="get-h22-ip" type="verbatim">
+        hostname -I | awk '{printf "%s\n", $1}{print $2}' | grep 192.168.255
     </exec>
   </vm> 
   <vm name="brg2" type="lxc" exec_mode="lxc-attach" arch="x86_64">
@@ -135,16 +166,33 @@ SPAIN
         ovs-vsctl add-port br0 eth1
         ovs-vsctl add-port br0 vxlan1 -- set interface vxlan1 type=vxlan options:remote_ip=10.255.0.3
     </exec>
+    <!-- Configure QoS -->
+    <exec seq="config-QoS-controller-net2" type="verbatim">
+      <!-- TO DO
+      CAMBIAR ESTA PARTE
+        service openvswitch-switch start
+        sleep 5
+        ovs-vsctl add-br br0
+        ovs-vsctl add-port br0 eth1
+        ovs-vsctl add-port br0 vxlan1 -- set interface vxlan1 type=vxlan options:remote_ip=10.255.0.3
+      HASTA AQUI >>>
+        sed '/OFPFlowMod(/,/)/s/)/, table_id=1)/' /usr/lib/python3/dist-packages/ryu/app/simple_switch_13.py > qos_simple_switch_13.py 
+        ryu-manager ryu.app.rest_qos ryu.app.rest_conf_switch ./qos_simple_switch_13.py
+        ovs-vsctl set bridge br0 protocols=OpenFlow10,OpenFlow12,OpenFlow13
+        ovs-vsctl set-fail-mode br0 secure
+        ovs-vsctl set bridge br0 other-config:datapath-id=0000000000000001
+        ovs-vsctl set-controller br0 tcp:127.0.0.1:6633
+        ovs-vsctl set-manager ptcp:6632
+      -->
+    </exec>
+    <exec seq="config-QoS-rules-net2" type="verbatim">
+      <!--
+    curl -X PUT -d '"tcp:127.0.0.1:6632"' http://127.0.0.1:8080/v1.0/conf/switches/0000000000000001/ovsdb_addr 
+    curl -X POST -d '{"port_name": "vxlan1", "type": "linux-htb", "max_rate": "6000000", "queues": [{"max_rate": "2000000"}, {"min_rate": "2000000"}]}' http://127.0.0.1:8080/qos/queue/0000000000000001 
+    curl -X POST -d '{"match": {"nw_src": "192.168.255.20", "nw_proto": "UDP", "udp_dst": "5002"}, "actions":{"queue": "1"}}' http://127.0.0.1:8080/qos/rules/0000000000000001 
+    curl -X POST -d '{"match": {"nw_src": "192.168.255.21", "nw_proto": "UDP", "udp_dst": "5002"}, "actions":{"queue": "0"}}' http://127.0.0.1:8080/qos/rules/0000000000000001
+    -->
+    </exec>
+
   </vm>
-  <!--
-  <host>
-    <hostif net="Net0">
-      <ipv4>172.17.2.100/24</ipv4>
-      
-        # to create a ryu simple_switch module to work with the Qos module, execute this: 
-        sed '/OFPFlowMod(/,/)/s/)/, table_id=1)/' /usr/lib/python3/dist-packages/ryu/app/simple_switch_13.py > qos_simple_switch_13.py
-      
-    </hostif>
-  </host>
-  -->
 </vnx>

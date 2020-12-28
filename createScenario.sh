@@ -33,39 +33,40 @@ osm ns-create --ns_name $VCPE2 --nsd_name vCPE --vim_account emu-vim
 echo "OSM Onboarding..."
 sleep 10
 
+
 #LEVANTAR ESCENARIOS VNX
-#ARRANCAR IMAGEN EN MODO DIRECTO
-#sudo vnx --modify-rootfs /usr/share/vnx/filesystems/vnx_rootfs_lxc_ubuntu64-18.04-v025-vnxlab/
-#Hacer login con root/xxxx e instalar los paquetes deseados. (iperf3)
-#Parar el contenedor con:
-#halt -p
 sudo vnx -f vnx/nfv3_home_lxc_ubuntu64.xml -t
 sudo vnx -f vnx/nfv3_server_lxc_ubuntu64.xml -t
 
 
-#LAS VNF NO SE USAN, BORRARLO
-VNF1="mn.dc1_$VCPE1-1-ubuntu-1"
-VNF2="mn.dc1_$VCPE1-2-ubuntu-1"
-VNF3="mn.dc1_$VCPE2-1-ubuntu-1"
-VNF4="mn.dc1_$VCPE2-2-ubuntu-1"
-
 VCPEPRIVIP="192.168.255.1"
 VCPEPUBIP1="10.2.3.1"
 VCPEPUBIP2="10.2.3.2"
-
-
 #CREAR VXLANs
 ./vcpe_start.sh $VCPE1 10.255.0.1 10.255.0.2
 ./vcpe_start.sh $VCPE2 10.255.0.3 10.255.0.4
 
-#CONFIGURAR VYOS (DEJAR QoS para el final) [NAT Y DHCP] El script configura los dos VyOS
+
+#CONFIGURAR VYOS [NAT Y DHCP]
 #Configuracion de tunel VXLAN entre vclass y vcpe (Desde NFV VyOS)
 ./configureVyOS.sh $VCPE1 $VCPEPRIVIP $VCPEPUBIP1
 ./configureVyOS.sh $VCPE2 $VCPEPRIVIP $VCPEPUBIP2
 
 
+#QoS
+#CAUDAL DE BAJADA
+#./setQoS.sh $VCPE1
+#./setQoS.sh $VCPE2
+#CAUDAL DE SUBIDA
+#sudo vnx -f vnx/nfv3_server_lxc_ubuntu64.xml -x config-QoS-controller-net1
+#sudo vnx -f vnx/nfv3_server_lxc_ubuntu64.xml -x config-QoS-rules-net1
+#sudo vnx -f vnx/nfv3_server_lxc_ubuntu64.xml -x config-QoS-controller-net2
+#sudo vnx -f vnx/nfv3_server_lxc_ubuntu64.xml -x config-QoS-rules-net2
 
 
 
-#QoS e IPv6
+
+
+
+#IPv6 y DHCP
 #TO DO

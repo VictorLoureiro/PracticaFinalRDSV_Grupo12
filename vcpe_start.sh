@@ -34,7 +34,6 @@ IP21=`sudo docker exec -it $VNF2 hostname -I | awk '{printf "%s\n", $1}{print $2
 echo "--"
 echo "--OVS Starting..."
 sudo docker exec -it $VNF1 /usr/share/openvswitch/scripts/ovs-ctl start
-#sudo docker exec -it $VNF2 /usr/share/openvswitch/scripts/ovs-ctl start
 
 echo "--"
 echo "--Connecting vCPE service with AccessNet and ExtNet..."
