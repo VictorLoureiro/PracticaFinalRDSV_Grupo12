@@ -11,7 +11,6 @@
 
 ------------
 ## Lo que falta por hacer:
-- Conexión al exterior desde los hosts h1X y h2X. No hace ping ni a Internet ni a 10.2.2.1 (interfaz de r1 con Internet). Este último problema se ha resuelto con un apaño en el routing de VyOS, pero debemos revisarlo (correo enviado)
 - QoS: tenemos una version inicial similar a la de la práctica 2.5.
 	- Ver que dirección IP utilizamos para el controller (Actualmente está en 127.0.0.1). La idea es que este controller nos sirva para controlar tambien los brgX de VNX
 	- Ver como definimos las reglas, si se establece para todos los puertos UDP o solo para el 5002 (igual que en la practica)
