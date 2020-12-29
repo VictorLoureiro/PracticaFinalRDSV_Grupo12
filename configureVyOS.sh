@@ -36,6 +36,9 @@ source /opt/vyatta/etc/functions/script-template
 configure
 set system host-name $HNAME
 set interfaces ethernet eth0 mtu 1400
+set interfaces ethernet eth0 disable
+delete interfaces ethernet eth0
+
 set interfaces ethernet eth2 address $VCPEPUBIP/24
 set interfaces ethernet eth2 description 'VCPE PUBLIC IP'
 set interfaces ethernet eth2 mtu 1400
@@ -56,7 +59,6 @@ set service dhcp-server shared-network-name LAN subnet 192.168.255.0/24 range 0 
 set nat source rule 100 outbound-interface eth2
 set nat source rule 100 source address '192.168.255.0/24'
 set nat source rule 100 translation address masquerade
-set protocols static route 10.2.2.0/24 next-hop 10.2.3.254 distance 1
 set protocols static route 0.0.0.0/0 next-hop 10.2.3.254 distance '1'
 commit
 save
@@ -76,3 +78,4 @@ exit
 #set protocols static route 172.17.0.0/16 next-hop $IPETH0 distance '1'
 #set protocols static route 192.168.100.0/24 next-hop $IP21 distance '1'
 #set protocols static route 192.168.255.0/24 next-hop $VCPEPRIVIP distance '1'
+#set protocols static route 10.2.2.0/24 next-hop 10.2.3.254 distance 1
