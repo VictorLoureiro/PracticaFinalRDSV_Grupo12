@@ -35,10 +35,6 @@ sudo docker exec -ti $VNF2 /bin/bash -c "
 source /opt/vyatta/etc/functions/script-template
 configure
 set system host-name $HNAME
-set interfaces ethernet eth0 mtu 1400
-set interfaces ethernet eth0 disable
-delete interfaces ethernet eth0
-
 set interfaces ethernet eth2 address $VCPEPUBIP/24
 set interfaces ethernet eth2 description 'VCPE PUBLIC IP'
 set interfaces ethernet eth2 mtu 1400
@@ -59,6 +55,8 @@ set service dhcp-server shared-network-name LAN subnet 192.168.255.0/24 range 0 
 set nat source rule 100 outbound-interface eth2
 set nat source rule 100 source address '192.168.255.0/24'
 set nat source rule 100 translation address masquerade
+set interfaces ethernet eth0 disable
+delete interfaces ethernet eth0
 set protocols static route 0.0.0.0/0 next-hop 10.2.3.254 distance '1'
 commit
 save
