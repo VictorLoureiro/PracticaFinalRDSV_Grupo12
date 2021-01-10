@@ -28,6 +28,7 @@ ETH11=`sudo docker exec -it $VNF1 ifconfig | grep eth1 | awk '{print $1}' | tr -
 ETH21=`sudo docker exec -it $VNF2 ifconfig | grep eth1 | awk '{print $1}' | tr -d ':'`
 IP11=`sudo docker exec -it $VNF1 hostname -I | awk '{printf "%s\n", $1}{print $2}' | grep 192.168.100`
 IP21=`sudo docker exec -it $VNF2 hostname -I | awk '{printf "%s\n", $1}{print $2}' | grep 192.168.100`
+IP21v6=`sudo docker exec -it $VNF2 hostname -I | awk '{print $4}'`
 
 ##################### VNFs Settings #####################
 ## 0. Iniciar el Servicio OpenVirtualSwitch en cada VNF:
