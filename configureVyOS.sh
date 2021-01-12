@@ -63,6 +63,7 @@ set service dhcpv6-server
 set service dhcpv6-server preference 0
 set service dhcpv6-server shared-network-name LAN6 subnet 2001:db8::/64 address-range start 2001:db8::100 stop 2001:db8::199
 set service dhcpv6-server shared-network-name LAN6 subnet 2001:db8::/64 name-server 2001:db8:111::ffff
+set service dhcpv6-server shared-network-name LAN6 subnet 2001:db8::/64 nis-server 2001:db8:111::ffff
 
 set nat source rule 100 outbound-interface eth2
 set nat source rule 100 source address '192.168.255.0/24'
@@ -71,6 +72,7 @@ set protocols static route 0.0.0.0/0 next-hop 10.2.3.254 distance '1'
 set interfaces ethernet eth0 disable
 commit
 save
+#restart dhcpv6 server
 exit
 "
 #PODEMOS CONFIGURAR DHCP PARA ASIGNAR DIRECCIONES ESTATICAS EN FUNCION DE LA MAC DEL HOST (VER  DOCUMENTACION DE VYOS)
