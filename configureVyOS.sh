@@ -59,10 +59,10 @@ set service dhcp-server shared-network-name LAN subnet 192.168.255.0/24 range 0 
 set service dhcp-server shared-network-name LAN subnet 192.168.255.0/24 range 0 stop '192.168.255.30'
 
 #DHCPv6 server functionality
-#set service dhcpv6-server
-#set service dhcpv6-server preference 0
-#set service dhcpv6-server shared-network-name LAN6 subnet 2001:db8:100::/64 name-server 2001:db8:111::111
-#set service dhcpv6-server shared-network-name LAN6 subnet 2001:db8:100::/64 address-range start 2001:db8:100::100 stop 2001:db8:100::199
+set service dhcpv6-server
+set service dhcpv6-server preference 0
+set service dhcpv6-server shared-network-name LAN6 subnet 2001:db8::/64 address-range start 2001:db8::100 stop 2001:db8::199
+set service dhcpv6-server shared-network-name LAN6 subnet 2001:db8::/64 name-server 2001:db8:111::ffff
 
 set nat source rule 100 outbound-interface eth2
 set nat source rule 100 source address '192.168.255.0/24'
