@@ -48,8 +48,6 @@ set interfaces vxlan vxlan1 ip arp-cache-timeout 180
 set interfaces vxlan vxlan1 vni 1
 set interfaces vxlan vxlan1 port 8472
 set interfaces vxlan vxlan1 remote $IP11
-# Faltaria meter una ipv6 para el remote
-# set interfaces vxlan vxlan1 remote $IP11v6
 set service ssh port '22'
 set service dhcp-server shared-network-name LAN subnet 192.168.255.0/24 default-router $VCPEPRIVIP
 set service dhcp-server shared-network-name LAN subnet 192.168.255.0/24 dns-server $VCPEPRIVIP
@@ -72,7 +70,6 @@ set protocols static route 0.0.0.0/0 next-hop 10.2.3.254 distance '1'
 set interfaces ethernet eth0 disable
 commit
 save
-#restart dhcpv6 server
 exit
 "
 #PODEMOS CONFIGURAR DHCP PARA ASIGNAR DIRECCIONES ESTATICAS EN FUNCION DE LA MAC DEL HOST (VER  DOCUMENTACION DE VYOS)

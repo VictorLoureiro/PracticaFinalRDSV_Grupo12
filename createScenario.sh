@@ -70,3 +70,8 @@ VCPEPUBIP2="10.2.3.2"
 
 #IPv6 y DHCP
 #TO DO
+#DHCLIENT -6 PARA LOS 4 HOSTS
+sudo vnx -f vnx/nfv3_home_lxc_ubuntu64.xml -x dhclient6-h11
+sudo vnx -f vnx/nfv3_home_lxc_ubuntu64.xml -x dhclient6-h12
+sudo vnx -f vnx/nfv3_home_lxc_ubuntu64.xml -x dhclient6-h21
+sudo vnx -f vnx/nfv3_home_lxc_ubuntu64.xml -x dhclient6-h22
