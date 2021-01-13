@@ -60,6 +60,10 @@ SPAIN
     <exec seq="get-h11-ip" type="verbatim">
         hostname -I | awk '{printf "%s\n", $1}{print $2}' | grep 192.168.255
     </exec>
+    <!-- Get h11 IPv6 -->
+    <exec seq="get-h11-ipv6" type="verbatim">
+        hostname -I | awk '{printf "%s\n", $1}{print $3}' | grep 2001::db8
+    </exec>
     <!-- Request h11v6 IP -->
     <exec seq="dhclient6-h11" type="verbatim">
         dhclient -6
@@ -79,6 +83,10 @@ SPAIN
     <!-- Get h12 IP -->
     <exec seq="get-h12-ip" type="verbatim">
         hostname -I | awk '{printf "%s\n", $1}{print $2}' | grep 192.168.255
+    </exec>
+    <!-- Get h12 IPv6 -->
+    <exec seq="get-h12-ipv6" type="verbatim">
+        hostname -I | awk '{printf "%s\n", $1}{print $3}' | grep 2001::db8
     </exec>
     <!-- Request h12v6 IP -->
     <exec seq="dhclient6-h12" type="verbatim">
@@ -143,6 +151,10 @@ SPAIN
     <exec seq="get-h21-ip" type="verbatim">
         hostname -I | awk '{printf "%s\n", $1}{print $2}' | grep 192.168.255
     </exec>
+    <!-- Get h21 IPv6 -->
+    <exec seq="get-h21-ipv6" type="verbatim">
+        hostname -I | awk '{printf "%s\n", $1}{print $3}' | grep 2001::db8
+    </exec>
     <!-- Request h21v6 IP -->
     <exec seq="dhclient6-h21" type="verbatim">
         dhclient -6
@@ -162,6 +174,10 @@ SPAIN
     <!-- Get h22 IP -->
     <exec seq="get-h22-ip" type="verbatim">
         hostname -I | awk '{printf "%s\n", $1}{print $2}' | grep 192.168.255
+    </exec>
+    <!-- Get h22 IPv6 -->
+    <exec seq="get-h22-ipv6" type="verbatim">
+        hostname -I | awk '{printf "%s\n", $1}{print $3}' | grep 2001::db8
     </exec>
     <!-- Request h22v6 IP -->
     <exec seq="dhclient6-h22" type="verbatim">
